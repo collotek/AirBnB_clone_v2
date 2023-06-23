@@ -115,29 +115,40 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
+        seq_reg = """(^\w+)((?:\s+\w+=[^\s}+)+)?"""
+        n = re.match(seq_reg, args)
+        args =[i for i in n.groups() if i] if n else []
+
         if not args:
             print("** class name missing **")
             return
 
-        cls = args.split(" ")
-        cls = [param for param in cls if param]
-        class_name = cls[0]
+
+        class_name = args[0]
         if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
 
         kwargs = {}
-        for param in cls[1:]:
-            [key, value] = param.split("=")
-            if value[0] == '"' and value[-1] == '"':
-                value = value[1:-1].replace('_', ' ')
-            elif '.' in value:
-                value = float(value)
-            kwargs[key] = value
+        if len(args) > 1:
+            cls = args.split(" ")
+            cls = [param for param in cls if param]
+            for param in cls[1:]:
+                [key, value] = param.split("=")
+                if value[0] == '"' and value[-1] == '"':
+                    value = value[1:-1].replace('_', ' ')
+                elif '.' in value:
+                    value = float(value)
+                else:
+                    value = int(value)
+                kwargs[key] = value
 
 
-        new_instance = self.classes[args](**kwargs)
-        storage.new(new_instance)
+        new_instance = HBNBCommand.classes[args]()
+
+        for key, value in kwargs.items():
+            setattr(new_instance, key, value)
+
         new_instance.save()
         print(new_instance.id)
         
