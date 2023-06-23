@@ -115,25 +115,24 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        seq_reg = """(^\w+)((?:\s+\w+=[^\s}+)+)?"""
+        seq_reg = """(^\w+)((?:\s+\w+=[^\s]+)+)?"""
         n = re.match(seq_reg, args)
-        args =[i for i in n.groups() if i] if n else []
+        args = [i for i in n.groups() if i] if n else []
 
         if not args:
             print("** class name missing **")
             return
-
 
         class_name = args[0]
         if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
 
-        kwargs = {}
+        kwargs = dict()
         if len(args) > 1:
-            cls = args.split(" ")
+            cls = args[1].split(" ")
             cls = [param for param in cls if param]
-            for param in cls[1:]:
+            for param in cls:
                 [key, value] = param.split("=")
                 if value[0] == '"' and value[-1] == '"':
                     value = value[1:-1].replace('_', ' ')
@@ -143,15 +142,13 @@ class HBNBCommand(cmd.Cmd):
                     value = int(value)
                 kwargs[key] = value
 
-
-        new_instance = HBNBCommand.classes[args]()
+        new_instance = HBNBCommand.classes[class_name]()
 
         for key, value in kwargs.items():
             setattr(new_instance, key, value)
 
         new_instance.save()
         print(new_instance.id)
-        
 
     def help_create(self):
         """ Help information for the create method """
@@ -262,7 +259,6 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, args):
         """ Updates a certain object with new info """
         c_name = c_id = att_name = att_val = kwargs = ''
-
         # isolate cls from id/args, ex: (<cls>, delim, <id/args>)
         args = args.partition(" ")
         if args[0]:
@@ -305,7 +301,6 @@ class HBNBCommand(cmd.Cmd):
                 args = args[second_quote + 1:]
 
             args = args.partition(' ')
-
             # if att_name was not quoted arg
             if not att_name and args[0] is not ' ':
                 att_name = args[0]
