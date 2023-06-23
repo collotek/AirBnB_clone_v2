@@ -73,7 +73,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+                    if pline[0] is '{' and pline[-1] is '}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -115,38 +115,23 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
-        seq_reg = """(^\w+)((?:\s+\w+=[^\s]+)+)?"""
-        n = re.match(seq_reg, args)
-        args = [i for i in n.groups() if i] if n else []
-
-        if not args:
+        try:
+            if not args:
+                raise SyntaxError()
+            list_arg = args.split(" ")
+            kw = {}
+            for arg in list_arg[1:]:
+                arg_splited = arg.split("=")
+                arg_splited[1] = eval(arg_splited[1])
+                if type(arg_splited[1]) is str:
+                    arg_splited[1] = arg_splited[1].replace("_", " ")
+                                     \.replace('"', '\\"')
+                kw[arg_splited[0]] = arg_splited[1]
+        except SyntaxError:
             print("** class name missing **")
-            return
-
-        class_name = args[0]
-        if class_name not in HBNBCommand.classes:
+        except NameError:
             print("** class doesn't exist **")
-            return
-
-        kwargs = dict()
-        if len(args) > 1:
-            cls = args[1].split(" ")
-            cls = [param for param in cls if param]
-            for param in cls:
-                [key, value] = param.split("=")
-                if value[0] == '"' and value[-1] == '"':
-                    value = value[1:-1].replace('_', ' ')
-                elif '.' in value:
-                    value = float(value)
-                else:
-                    value = int(value)
-                kwargs[key] = value
-
-        new_instance = HBNBCommand.classes[class_name]()
-
-        for key, value in kwargs.items():
-            setattr(new_instance, key, value)
-
+        new_instance = HBNBCommand.classes[arg_list[0]](**kw)
         new_instance.save()
         print(new_instance.id)
 
