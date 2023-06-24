@@ -121,7 +121,7 @@ class HBNBCommand(cmd.Cmd):
             list_arg = args.split(" ")
             kw = {}
             for arg in list_arg[1:]:
-                arg_splited = args.split("=")
+                arg_splited = arg.split("=")
                 arg_splited[1] = eval(arg_splited[1])
                 if type(arg_splited[1]) is str:
                     arg_splited[1] = arg_splited[1].replace("_", " ")\
