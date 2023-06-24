@@ -129,8 +129,7 @@ class HBNBCommand(cmd.Cmd):
                 kw[arg_splited[0]] = arg_splited[1]
         except SyntaxError:
             print("** class name missing **")
-        except NameError:
-            print("** class doesn't exist **")
+
         new_instance = HBNBCommand.classes[list_arg[0]](**kw)
         new_instance.save()
         print(new_instance.id)
