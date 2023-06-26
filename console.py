@@ -116,11 +116,14 @@ class HBNBCommand(cmd.Cmd):
     def do_create(self, args):
         """ Create an object of any class with given patrams """
         split_args = args.split(' ')
-        if not split_args:
+        if not args:
             print("** class name missing **")
-        for val in HBNBCommand.classes.values():
-            if split_args[0] != val:
-                print("** class doesn't exist **")
+            return
+
+        if split_args[0] not in HBNBCommand.classes:
+            print("** class doesn't exist **")
+            return
+
         list_args = split_args[1:].split('=')
         index = 0
         obj = eval('split_args[0]()')
