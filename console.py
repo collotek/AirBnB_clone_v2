@@ -126,9 +126,13 @@ class HBNBCommand(cmd.Cmd):
         obj = eval('split_args[0]()')
         while (index < len(list_args)):
             if index % 2 == 0:
-                key = index
+                key = list_args[index]
             else:
-                value = index
+                value = list_args[index]
+                if type(value) is str:
+                    value = value.replace("_", " ").replace('"', '\\"')
+                if '.' in value:
+                    value = float(value)
 
         setattr(obj, key, value)
 
