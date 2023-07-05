@@ -126,7 +126,7 @@ class HBNBCommand(cmd.Cmd):
 
         list_args = split_args[1:].split('=')
         index = 0
-        obj = eval('split_args[0]()')
+        obj = eval(split_args[0])()
         while (index < len(list_args)):
             if index % 2 == 0:
                 key = list_args[index]
