@@ -1,14 +1,6 @@
 #!/usr/bin/python3
 """ This is file storage class for AirBnB """
 import json
-from models.base_model import BaseModel
-from models.user import User
-from models.state import State
-from models.city import City
-from models.amenity import Amenity
-from models.place import Place
-from models.review import Review
-import shlex
 
 
 class FileStorage:
@@ -38,27 +30,42 @@ class FileStorage:
         Args:
             obj: given object
         """
-        if obj:
-            key = "{}.{}".format(type(obj).__name__, obj.id)
-            self.__objects[key] = obj
+        FileStorage.__objects.update(
+            {'{}.{}'.format(obj.to_dict()['__class__'], obj.id): obj})
 
     def save(self):
         """serialize the file path to JSON file path
         """
-        my_dict = {}
-        for key, value in self.__objects.items():
-            my_dict[key] = value.to_dict()
-        with open(self.__file_path, 'w', encoding="UTF-8") as f:
+        with open(FileStorage.__file_path, 'w') as f:
+            my_dict = {}
+            my_dict.update(FileStorage.__objects)
+            for key, val in my_dict.items():
+                my_dict[key] = val.to_dict()
             json.dump(my_dict, f)
 
     def reload(self):
         """serialize the file path to JSON file path
         """
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.place import Place
+        from models.state import State
+        from models.city import City
+        from models.amenity import Amenity
+        from models.review import Review
+
+        classes = {
+            'BaseModel': BaseModel, 'User': User, 'Place': Place,
+            'State': State, 'City': City, 'Amenity': Amenity,
+            'Review': Review
+        }
         try:
-            with open(self.__file_path, 'r', encoding="UTF-8") as f:
-                for key, value in (json.load(f)).items():
-                    value = eval(value["__class__"])(**value)
-                    self.__objects[key] = value
+            tempo = {}
+            with open(FileStorage.__file_path, 'r') as f:
+                tempo = json.load(f)
+                for key, value in tempo.items():
+                    FileStorage.__objects[key] = classes[
+                        value['__class__']](**value)
         except FileNotFoundError:
             pass
 

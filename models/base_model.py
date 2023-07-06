@@ -24,7 +24,7 @@ class BaseModel:
             self.updated_at = datetime.now()
 
         else:
-            if 'id' not in kwargs.keys():
+            if not 'id' in kwargs.keys():
                 self.id = str(uuid.uuid4())
             if 'created_at' in kwargs.keys() and 'updated_at' in kwargs.keys():
                 kwargs['updated_at'] = datetime.strptime(
@@ -44,7 +44,7 @@ class BaseModel:
         new_dict = self.__dict__.copy()
         if '_sa_instance_state' in new_dict.keys():
             del new_dict['_sa_instance_state']
-        return '[{}] ({}) {}'.format(cls, self.id, self.new_dict)
+        return '[{}] ({}) {}'.format(cls, self.id, new_dict)
 
     def save(self):
         """Updates updated_at with current time when instance is changed"""
