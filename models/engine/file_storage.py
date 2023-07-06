@@ -22,21 +22,16 @@ class FileStorage:
     __objects = {}
 
     def all(self, cls=None):
-        """returns a dictionary
-        Return:
-            returns a dictionary of __object
-        """
-        dic = {}
-        if cls:
-            dictionary = self.__objects
-            for key in dictionary:
-                partition = key.replace('.', ' ')
-                partition = shlex.split(partition)
-                if (partition[0] == cls.__name__):
-                    dic[key] = self.__objects[key]
-            return (dic)
-        else:
-            return self.__objects
+        """Return a list of object of one type of class"""
+        if cls is not None:
+            # create a new dictionary of objects to passed cls
+            # key must be the same as in __objects
+            obj_dict = {key: FileStorage.__objects[key] for key
+                        in FileStorage.__objects.keys() if
+                        FileStorage.__objects[key].__class__ == cls}
+            return obj_dict
+        # return all objects if class is not specified
+        return FileStorage.__objects
 
     def new(self, obj):
         """sets __object to given obj
@@ -68,11 +63,13 @@ class FileStorage:
             pass
 
     def delete(self, obj=None):
-        """ delete an existing element
-        """
-        if obj:
-            key = "{}.{}".format(type(obj).__name__, obj.id)
-            del self.__objects[key]
+        """ Delete object inside __objects dictionary"""
+        if obj is not None:
+            # check if object is in dictionary
+            key = ".".join([obj.to_dict()['__class__'], obj.id])
+            if key in FileStorage.__objects.keys():
+                del FileStorage.__objects[key]
+                self.save()
 
     def close(self):
         """ calls reload()
