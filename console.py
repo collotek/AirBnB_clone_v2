@@ -12,6 +12,25 @@ from models.amenity import Amenity
 from models.review import Review
 
 
+def isfloat(arg):
+    """checks for a float"""
+    try:
+        float(arg)
+        return True
+    except ValueError:
+        return False
+
+def t_parser(args):
+    """Check data type of arg and cast it"""
+    if args.isalpha():
+        args = str(args)
+    elif args.isdigit():
+        args = int(args)
+    elif isfloat(args):
+        args = float(args)
+    return args
+
+
 class HBNBCommand(cmd.Cmd):
     """ Contains functionality for the HBNB console"""
 
@@ -29,24 +48,6 @@ class HBNBCommand(cmd.Cmd):
              'max_guest': int, 'price_by_night': int,
              'latitude': float, 'longitude': float
             }
-
-    def isfloat(arg):
-        """checks for a float"""
-        try:
-            float(arg)
-            return True
-        except ValueError:
-            return False
-
-    def t_parser(args):
-        """Check data type of arg and cast it"""
-        if args.isalpha():
-            args = str(args)
-        elif args.isdigit():
-            args = int(args)
-        elif isfloat(args):
-            args = float(args)
-        return args
 
     def preloop(self):
         """Prints if isatty is false"""
