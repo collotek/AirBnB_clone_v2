@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-""" Place Module for HBNB project """
-from models.base_model import BaseModel
+""" Place Module """
 from models.amenity import Amenity
+from models.base_model import BaseModel
 from models.base_model import Base
 import models
 from sqlalchemy.orm import relationship
@@ -11,17 +11,16 @@ from models.review import Review
 
 
 place_amenity_table = Table("place_amenity", Base.metadata,
-                            Column("place_id", String(60),
-                                   ForeignKey("places.id"),
-                                   primary_key=True, nullable=False),
-                            Column("amenity_id", String(60),
-                                   ForeignKey("amenities.id"),
-                                   primary_key=True,
-                                   nullable=False))
+                      Column("place_id", String(60),
+                             ForeignKey("places.id"),
+                             primary_key=True, nullable=False),
+                      Column("amenity_id", String(60),
+                             ForeignKey("amenities.id"), primary_key=True,
+                             nullable=False))
 
 
-class Place(BaseModel):
-    """ A place to stay """
+class Place(BaseModel, Base):
+    """ Place """
     __tablename__ = "places"
     city_id = Column(String(60), ForeignKey("cities.id"), nullable=False)
     user_id = Column(String(60), ForeignKey("users.id"), nullable=False)
@@ -43,7 +42,8 @@ class Place(BaseModel):
     if getenv("HBNB_TYPE_STORAGE") != "db":
         @property
         def reviews(self):
-            """ get reviews """
+            """
+            """
             place_reviews = []
             reviews_dict = models.storage.all(Review)
             for review in reviews_dict.values():
@@ -54,11 +54,13 @@ class Place(BaseModel):
 
         @property
         def amenities(self):
-            """ get private amenity_ids"""
+            """
+            """
             return amenity_ids
 
         @amenities.setter
         def amenities(self, obj):
-            """ sets obj with obj.id """
+            """
+            """
             if isinstance(obj, Amenity) and obj.id not in self.amenity_ids:
                 self.amenity_ids.append(obj.id)

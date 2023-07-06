@@ -8,8 +8,6 @@ import json
 import os
 
 
-@unittest.skipIf(os.getenv('HBNB_TYPE_STORAGE') == 'db',
-                 "Tests for file storage")
 class test_basemodel(unittest.TestCase):
     """ """
 
@@ -26,7 +24,7 @@ class test_basemodel(unittest.TestCase):
     def tearDown(self):
         try:
             os.remove('file.json')
-        except Exception:
+        except:
             pass
 
     def test_default(self):
@@ -61,11 +59,8 @@ class test_basemodel(unittest.TestCase):
     def test_str(self):
         """ """
         i = self.value()
-        dictionary = i.__dict__.copy()
-        if '_sa_instance_state' in dictionary.keys():
-            del dictionary['_sa_instance_state']
         self.assertEqual(str(i), '[{}] ({}) {}'.format(self.name, i.id,
-                         dictionary))
+                         i.__dict__))
 
     def test_todict(self):
         """ """
@@ -82,8 +77,8 @@ class test_basemodel(unittest.TestCase):
     def test_kwargs_one(self):
         """ """
         n = {'Name': 'test'}
-        new = self.value(**n)
-        self.assertTrue('Name' in new.__dict__.keys())
+        with self.assertRaises(KeyError):
+            new = self.value(**n)
 
     def test_id(self):
         """ """
@@ -101,5 +96,4 @@ class test_basemodel(unittest.TestCase):
         self.assertEqual(type(new.updated_at), datetime.datetime)
         n = new.to_dict()
         new = BaseModel(**n)
-        new.save()
         self.assertFalse(new.created_at == new.updated_at)

@@ -1,22 +1,17 @@
 #!/usr/bin/python3
-""" This is file storage class for AirBnB """
+"""defines a class to manage file storage for hbnb clone"""
 import json
 
 
 class FileStorage:
-    """This class serializes instances to a JSON file and
-    deserializes JSON file to instances
-    Attributes:
-        __file_path: path to the JSON file
-        __objects: objects will be stored
-    """
-    __file_path = "file.json"
+    """manages storage of hbnb models in JSON format"""
+    __file_path = 'file.json'
     __objects = {}
 
     def all(self, cls=None):
-        """Return a list of object of one type of class"""
+        """Returns list of object of one type of class"""
         if cls is not None:
-            # create a new dictionary of objects to passed cls
+            # create a new dictionary of objects fo passed cls
             # key must be the same as in __objects
             obj_dict = {key: FileStorage.__objects[key] for key
                         in FileStorage.__objects.keys() if
@@ -26,26 +21,21 @@ class FileStorage:
         return FileStorage.__objects
 
     def new(self, obj):
-        """sets __object to given obj
-        Args:
-            obj: given object
-        """
+        """Adds new object to storage dictionary"""
         FileStorage.__objects.update(
             {'{}.{}'.format(obj.to_dict()['__class__'], obj.id): obj})
 
     def save(self):
-        """serialize the file path to JSON file path
-        """
+        """Saves storage dictionary to file"""
         with open(FileStorage.__file_path, 'w') as f:
-            my_dict = {}
-            my_dict.update(FileStorage.__objects)
-            for key, val in my_dict.items():
-                my_dict[key] = val.to_dict()
-            json.dump(my_dict, f)
+            temp = {}
+            temp.update(FileStorage.__objects)
+            for key, val in temp.items():
+                temp[key] = val.to_dict()
+            json.dump(temp, f)
 
     def reload(self):
-        """serialize the file path to JSON file path
-        """
+        """Loads storage dictionary from file"""
         from models.base_model import BaseModel
         from models.user import User
         from models.place import Place
@@ -60,12 +50,12 @@ class FileStorage:
             'Review': Review
         }
         try:
-            tempo = {}
+            temp = {}
             with open(FileStorage.__file_path, 'r') as f:
-                tempo = json.load(f)
-                for key, value in tempo.items():
+                temp = json.load(f)
+                for key, val in temp.items():
                     FileStorage.__objects[key] = classes[
-                        value['__class__']](**value)
+                        val['__class__']](**val)
         except FileNotFoundError:
             pass
 
@@ -79,6 +69,5 @@ class FileStorage:
                 self.save()
 
     def close(self):
-        """ calls reload()
-        """
+        """Temporary documentation"""
         self.reload()

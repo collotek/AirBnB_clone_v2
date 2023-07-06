@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" State Module for HBNB project """
+"""HBNB project State Module"""
 from models.base_model import BaseModel
 from models.base_model import Base
 import models
@@ -9,8 +9,8 @@ from os import getenv
 from models.city import City
 
 
-class State(BaseModel):
-    """ State class and everything to do with state """
+class State(BaseModel, Base):
+    """ State class """
     __tablename__ = "states"
     name = Column(String(128), nullable=False)
     cities = relationship("City", backref='state', cascade='all, delete')
@@ -23,10 +23,10 @@ class State(BaseModel):
             Returns:
                 _type_: _description_
             """
-            stat_cities = []
-            cities_diction = models.storage.all(City)
-            for city in cities_diction.values():
+            state_cities = []
+            cities_dict = models.storage.all(City)
+            for city in cities_dict.values():
                 if city.state_id == self.id:
-                    stat_cities.append(city)
+                    state_cities.append(city)
 
-            return stat_cities
+            return state_cities

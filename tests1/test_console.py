@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" console test module
+""" Test module for console
 """
 from console import HBNBCommand
 from io import StringIO
@@ -13,7 +13,7 @@ from unittest.mock import patch
 
 
 @skipIf(getenv('HBNB_TYPE_STORAGE') == 'db',
-        'file storage tests')
+        'Tests for file storage')
 class TestCase(TestCase):
     """ Unittests for hbnb console """
     def setUp(self):
@@ -50,7 +50,6 @@ class TestCase(TestCase):
             self.assertTrue("'guests': 2" in f.getvalue())
             self.assertTrue("'latitude': 111.3" in f.getvalue())
 
-
 @skipIf(getenv('HBNB_TYPE_STORAGE') != 'db',
         'Tests for db storage')
 class TestPlaceStateDb(TestCase):
@@ -85,7 +84,6 @@ class TestPlaceStateDb(TestCase):
             records_2 = storage.all(City)
             self.assertEqual(len(records_2) - len(records_2), 1)
             truncate_string_io(f)
-
 
 def truncate_string_io(str_io):
     """ Method to truncate string input output object and

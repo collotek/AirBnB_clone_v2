@@ -13,26 +13,26 @@ from models.review import Review
 
 
 def isfloat(arg):
-    """checks for a float"""
+    """Checks if argument is a float data type variable"""
     try:
         float(arg)
         return True
     except ValueError:
         return False
 
-def t_parser(args):
-    """Check data type of arg and cast it"""
-    if args.isalpha():
-        args = str(args)
-    elif args.isdigit():
-        args = int(args)
-    elif isfloat(args):
-        args = float(args)
-    return args
 
+def type_parser(arg):
+    """Check data type of arg and cast it"""
+    if arg.isalpha():
+        arg = str(arg)
+    elif arg.isdigit():
+        arg = int(arg)
+    elif isfloat(arg):
+        arg = float(arg)
+    return arg
 
 class HBNBCommand(cmd.Cmd):
-    """ Contains functionality for the HBNB console"""
+    """ Contains the functionality for the HBNB console"""
 
     # determines prompt for interactive/non-interactive modes
     prompt = '(hbnb) ' if sys.__stdin__.isatty() else ''
@@ -93,7 +93,7 @@ class HBNBCommand(cmd.Cmd):
                 if pline:
                     # check for *args or **kwargs
                     if pline[0] == '{' and pline[-1] == '}'\
-                            and type(eval(pline)) is dict:
+                            and type(eval(pline)) == dict:
                         _args = pline
                     else:
                         _args = pline.replace(',', '')
@@ -133,32 +133,31 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """ Create an object of any class with given patrams """
-        split_args = args.split()
+        """ Create an object of any class"""
+        args = args.split()
 
         if not args:
             print("** class name missing **")
             return
-        elif split_args[0] not in HBNBCommand.classes:
+        elif args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
+        new_instance = eval(args[0])()
 
-        obj = eval(split_args[0])()
-
-        n_dict = {}
-        for arg in split_args[1:]:
-            splt = arg.split("=")
-            key = splt[0]
-            if "_" in splt[1]:
-                splt[1] = splt[1].replace("_", " ")
-            value = t_parser(splt[1])
+        new_dict = {}
+        for arg in args[1:]:
+            atr = arg.split("=")
+            key = atr[0]
+            if "_" in atr[1]:
+                atr[1] = atr[1].replace("_", " ")
+            value = type_parser(atr[1])
             if type(value) == str:
                 value = value.replace("\"", "")
-            n_dict[splt[0]] = splt[1]
-            obj.__dict__.update({key: value})
+            new_dict[atr[0]] = atr[1]
+            new_instance.__dict__.update({key: value})
 
-        obj.save()
-        print(obj.id)
+        new_instance.save()
+        print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
@@ -240,11 +239,11 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all().items():
                 if k.split('.')[0] == args:
                     print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
+            for k, v in storage.all().items():
                 print_list.append(str(v))
 
         print(print_list)
@@ -269,6 +268,7 @@ class HBNBCommand(cmd.Cmd):
     def do_update(self, args):
         """ Updates a certain object with new info """
         c_name = c_id = att_name = att_val = kwargs = ''
+
         # isolate cls from id/args, ex: (<cls>, delim, <id/args>)
         args = args.partition(" ")
         if args[0]:
@@ -311,6 +311,7 @@ class HBNBCommand(cmd.Cmd):
                 args = args[second_quote + 1:]
 
             args = args.partition(' ')
+
             # if att_name was not quoted arg
             if not att_name and args[0] != ' ':
                 att_name = args[0]
