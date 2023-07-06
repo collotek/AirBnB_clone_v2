@@ -30,6 +30,24 @@ class HBNBCommand(cmd.Cmd):
              'latitude': float, 'longitude': float
             }
 
+    def isfloat(arg):
+        """checks for a float"""
+        try:
+            float(arg)
+            return True
+        except ValueError:
+            return False
+
+    def t_parser(args):
+        """Check data type of arg and cast it"""
+        if args.isalpha():
+            args = str(args)
+        elif args.isdigit():
+            args = int(args)
+        elif isfloat(args):
+            args = float(args)
+        return args
+
     def preloop(self):
         """Prints if isatty is false"""
         if not sys.__stdin__.isatty():
@@ -115,29 +133,28 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class with given patrams """
-        split_args = args.split(' ')
+        split_args = args.split()
+
         if not args:
             print("** class name missing **")
             return
-
-        if split_args[0] not in HBNBCommand.classes:
+        elif split_args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
 
-        list_args = split_args[1:].split('=')
-        index = 0
         obj = eval(split_args[0])()
-        while (index < len(list_args)):
-            if index % 2 == 0:
-                key = list_args[index]
-            else:
-                value = list_args[index]
-                if type(value) is str:
-                    value = value.replace("_", " ").replace('"', '\\"')
-                if '.' in value:
-                    value = float(value)
 
-        setattr(obj, key, value)
+        n_dict = {}
+        for arg in split_args[1:]:
+            splt = arg.split("=")
+            key = splt[0]
+            if "_" in splt[1]:
+                splt[1] = splt[1].replace("_", " ")
+            value = t_parser(splt[1])
+            if type(value) == str:
+                value = value.replace("\"", "")
+            n_dict[splt[0]] = splt[1]
+            obj.__dict__.update({key: value})
 
         obj.save()
         print(obj.id)
