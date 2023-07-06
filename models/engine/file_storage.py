@@ -1,15 +1,15 @@
 #!/usr/bin/python3
-"""defines a class to manage file storage for hbnb clone"""
+"""This module defines a class to manage file storage for hbnb clone"""
 import json
 
 
 class FileStorage:
-    """manages storage of hbnb models in JSON format"""
+    """This class manages storage of hbnb models in JSON format"""
     __file_path = 'file.json'
     __objects = {}
 
     def all(self, cls=None):
-        """Returns list of object of one type of class"""
+        """Returns a list of object of one type of class"""
         if cls is not None:
             # create a new dictionary of objects fo passed cls
             # key must be the same as in __objects
