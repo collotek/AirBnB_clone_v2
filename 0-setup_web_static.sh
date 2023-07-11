@@ -5,7 +5,7 @@ exists()
 {
   command -v "$1" >/dev/null 2>&1
 }
-if ! [exists nginx];then
+if ! exists nginx;then
 	sudo apt-get -y update
 	sudo apt-get -y install nginx
 fi
