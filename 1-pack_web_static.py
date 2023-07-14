@@ -11,7 +11,7 @@ def do_pack():
         current_day = datetime.now()
         current_time = current_day.strftime("%Y%m%d%H%M%S")
         location = "versions/web_static_{}.tgz".format(current_time)
-        local_name = local("tar -czvf {} web_static".format(location))
+        local_name = local("tar -cvzf {} web_static".format(location))
         return local_name
     except Exception:
         return None
